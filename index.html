@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Follback</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png" type="image/png">
+</head>
+<body>
+    <div class="container">
+        <div class="toggle-container">
+            <label class="switch">
+                <input type="checkbox" id="toggle-mode">
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <h1>Follback</h1>
+        <p>Find out which of your GitHub followers you are not following back.</p>
+        <form id="github-form">
+            <input type="text" id="username" placeholder="GitHub Username" required>
+            <input type="password" id="token" placeholder="Personal Access Token" required>
+            <div class="checkboxes">
+                <label><input type="checkbox" id="bio"> Bio</label>
+                <label><input type="checkbox" id="organizations"> Organizations</label>
+            </div>
+            <button type="submit" id="submit-button">Find Followers You Don't Follow Back</button>
+        </form>
+        <div id="error-message" class="hidden"></div>
+        <div id="progress-indicator" class="hidden">
+            <div class="progress-bar"></div>
+        </div>
+        <table id="followers-table" class="hidden">
+            <thead>
+                <tr id="table-headers">
+                    <th>Name</th>
+                    <th>Total Stars</th>
+                    <th class="bio-column hidden">Bio</th>
+                    <th class="orgs-column hidden">Organizations</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Follower rows will be inserted here -->
+            </tbody>
+        </table>
+        <div id="pagination" class="hidden">
+            <button id="prev-page" class="pagination-button" disabled>Previous</button>
+            <span id="page-info"></span>
+            <button id="next-page" class="pagination-button" disabled>Next</button>
+        </div>
+    </div>
+    <footer>
+        Created by <a href="https://github.com/yashrajnayak" target="_blank">Yashraj Nayak</a> | 
+        <a href="https://github.com/yashrajnayak/follback" target="_blank">Contribute on GitHub</a>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

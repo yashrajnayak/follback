@@ -1,0 +1,241 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.light-mode {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.container {
+    flex: 1;
+    padding: 20px;
+    text-align: center;
+    max-width: 800px;
+    margin: auto;
+}
+
+.toggle-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(14px);
+}
+
+h1 {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+body.light-mode h1 {
+    color: #000000;
+}
+
+p {
+    color: #b0b0b0;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+body.light-mode p {
+    color: #000000;
+}
+
+form {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input {
+    margin: 5px;
+    padding: 10px;
+    font-size: 16px;
+    width: calc(100% - 22px);
+    max-width: 300px;
+    font-family: 'Roboto', sans-serif;
+    background-color: #333333;
+    color: #e0e0e0;
+    border: 1px solid #444444;
+    border-radius: 5px;
+}
+
+body.light-mode input {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #cccccc;
+}
+
+.checkboxes {
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.checkboxes label {
+    margin-right: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #2ea44f; /* GitHub green */
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #2c974b; /* Darker GitHub green */
+}
+
+.pagination-button {
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #444444;
+    padding: 8px;
+    text-align: left;
+    font-family: 'Roboto', sans-serif;
+    color: #ffffff;
+}
+
+body.light-mode th, body.light-mode td {
+    border: 1px solid #cccccc;
+    color: #000000;
+}
+
+th {
+    background-color: #24292e; /* GitHub dark gray */
+    color: white;
+    font-weight: 700;
+}
+
+body.light-mode th {
+    background-color: #f6f8fa;
+    color: #000000;
+}
+
+a {
+    color: #58a6ff; /* GitHub blue */
+}
+
+body.light-mode a {
+    color: #0366d6;
+}
+
+.hidden {
+    display: none;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #1e1e1e;
+    font-family: 'Roboto', sans-serif;
+    color: #ffffff;
+}
+
+body.light-mode footer {
+    background-color: #f6f8fa;
+    color: #000000;
+}
+
+#progress-indicator {
+    width: 100%;
+    background-color: #333333;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+body.light-mode #progress-indicator {
+    background-color: #f6f8fa;
+}
+
+.progress-bar {
+    width: 0;
+    height: 10px;
+    background-color: #2ea44f; /* GitHub green */
+    transition: width 0.4s;
+}
+
+@media (max-width: 600px) {
+    input, button {
+        width: 100%;
+        max-width: none;
+    }
+
+    .checkboxes {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .checkboxes label {
+        margin-bottom: 10px;
+    }
+}
