@@ -97,6 +97,7 @@ form {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 10px; /* Add space between elements */
 }
 
 input {
@@ -211,6 +212,8 @@ body.light-mode footer {
     border-radius: 4px;
     overflow: hidden;
     margin-top: 20px;
+    height: 10px; /* Slim progress bar */
+    position: relative; /* Ensure the percentage is positioned correctly */
 }
 
 body.light-mode #progress-indicator {
@@ -219,9 +222,22 @@ body.light-mode #progress-indicator {
 
 .progress-bar {
     width: 0;
-    height: 10px;
+    height: 100%; /* Full height of the progress indicator */
     background-color: #2ea44f; /* GitHub green */
     transition: width 0.4s;
+}
+
+#progress-percentage {
+    margin-top: 5px;
+    color: #e0e0e0;
+    text-align: center; /* Center the percentage text */
+    position: absolute; /* Position the percentage text */
+    top: 15px; /* Adjust as needed */
+    width: 100%;
+}
+
+body.light-mode #progress-percentage {
+    color: #000000;
 }
 
 @media (max-width: 600px) {

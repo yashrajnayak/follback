@@ -6,10 +6,9 @@ document.getElementById('github-form').addEventListener('submit', async function
 
     const username = document.getElementById('username').value;
     const token = document.getElementById('token').value;
-    const includeBio = document.getElementById('bio').checked;
-    const includeOrgs = document.getElementById('organizations').checked;
     const progressIndicator = document.getElementById('progress-indicator');
     const progressBar = document.querySelector('.progress-bar');
+    const progressPercentage = document.getElementById('progress-percentage');
     const followersTable = document.getElementById('followers-table');
     const tbody = followersTable.querySelector('tbody');
     const tableHeaders = document.getElementById('table-headers');
@@ -24,22 +23,22 @@ document.getElementById('github-form').addEventListener('submit', async function
 
     // Show progress indicator and reset table and pagination
     progressIndicator.classList.remove('hidden');
+    submitButton.classList.add('hidden'); // Hide the submit button
     followersTable.classList.add('hidden');
     pagination.classList.add('hidden');
     tbody.innerHTML = '';
     progressBar.style.width = '0%';
+    progressPercentage.textContent = '0%';
     errorMessage.textContent = '';
 
-    // Update table headers based on selected options
+    // Update table headers to only include Name and Total Stars
     tableHeaders.innerHTML = '<th>Name</th><th>Total Stars</th>';
-    if (includeBio) tableHeaders.innerHTML += '<th class="bio-column">Bio</th>';
-    if (includeOrgs) tableHeaders.innerHTML += '<th class="orgs-column">Organizations</th>';
 
     try {
         // Fetch followers and filter out those you are already following back
         const followers = await fetchFollowers(username, token);
         const notFollowingBack = await fetchNotFollowingBack(username, token, followers);
-        const sortedFollowers = await fetchAdditionalInfo(token, notFollowingBack, progressBar, includeBio, includeOrgs);
+        const sortedFollowers = await fetchAdditionalInfo(token, notFollowingBack, progressBar, progressPercentage);
 
         // Sort followers by total stars
         sortedFollowers.sort((a, b) => b.totalStars - a.totalStars);
@@ -55,8 +54,6 @@ document.getElementById('github-form').addEventListener('submit', async function
                 const row = document.createElement('tr');
                 row.innerHTML = `<td><a href="${follower.html_url}" target="_blank">${follower.name || follower.login}</a></td>`;
                 row.innerHTML += `<td>${follower.totalStars}</td>`;
-                if (includeBio) row.innerHTML += `<td class="bio-column">${follower.bio || ''}</td>`;
-                if (includeOrgs) row.innerHTML += `<td class="orgs-column">${follower.organizations.join(', ')}</td>`;
                 tbody.appendChild(row);
             });
 
@@ -91,21 +88,9 @@ document.getElementById('github-form').addEventListener('submit', async function
         document.getElementById('username').classList.add('hidden');
         document.getElementById('token').classList.add('hidden');
         submitButton.textContent = 'Reset';
+        submitButton.classList.remove('hidden'); // Ensure the reset button is visible
         submitButton.addEventListener('click', () => location.reload());
 
-        // Show checkboxes and add event listeners to toggle columns
-        const checkboxes = document.querySelector('.checkboxes');
-        checkboxes.classList.remove('hidden');
-        document.getElementById('bio').addEventListener('change', toggleColumn);
-        document.getElementById('organizations').addEventListener('change', toggleColumn);
-
-        // Hide Bio and Organizations columns if they were not checked
-        if (!includeBio) {
-            document.querySelectorAll('.bio-column').forEach(col => col.classList.add('hidden'));
-        }
-        if (!includeOrgs) {
-            document.querySelectorAll('.orgs-column').forEach(col => col.classList.add('hidden'));
-        }
     } catch (error) {
         console.error('Error fetching data:', error);
         errorMessage.textContent = 'An error occurred while fetching data. Please try again.';
@@ -129,19 +114,30 @@ async function fetchFollowers(username, token) {
 
 // Fetch users you are following and filter out those who are following you back
 async function fetchNotFollowingBack(username, token, followers) {
-    const response = await fetch(`https://api.github.com/users/${username}/following`, {
-        headers: { 'Authorization': `token ${token}` }
-    });
-    if (!response.ok) {
-        throw new Error('Failed to fetch following');
+    const following = [];
+    let page = 1;
+    const perPage = 100;
+
+    // Fetch all users you are following, handling pagination
+    while (true) {
+        const response = await fetch(`https://api.github.com/users/${username}/following?per_page=${perPage}&page=${page}`, {
+            headers: { 'Authorization': `token ${token}` }
+        });
+        if (!response.ok) {
+            throw new Error('Failed to fetch following');
+        }
+        const data = await response.json();
+        if (data.length === 0) break;
+        following.push(...data);
+        page++;
     }
-    const following = await response.json();
+
     const followingLogins = new Set(following.map(user => user.login));
     return followers.filter(follower => !followingLogins.has(follower.login));
 }
 
 // Fetch additional info for followers and update progress bar
-async function fetchAdditionalInfo(token, followers, progressBar, includeBio, includeOrgs) {
+async function fetchAdditionalInfo(token, followers, progressBar, progressPercentage) {
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
     const followersWithInfo = [];
     const totalFollowers = followers.length;
@@ -169,44 +165,23 @@ async function fetchAdditionalInfo(token, followers, progressBar, includeBio, in
             const repos = await starsResponse.json();
             followerInfo.totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
 
-            // Include bio if selected
-            if (includeBio) {
-                followerInfo.bio = userData.bio;
-            }
-
-            // Include organizations if selected
-            if (includeOrgs) {
-                const orgsResponse = await fetch(userData.organizations_url, {
-                    headers: { 'Authorization': `token ${token}` }
-                });
-                const orgs = await orgsResponse.json();
-                followerInfo.organizations = orgs.map(org => org.login);
-            }
-
             return followerInfo;
         });
 
         const batchResults = await Promise.all(batchPromises);
         followersWithInfo.push(...batchResults);
 
-        // Update progress bar
-        progressBar.style.width = `${((i + batchSize) / totalFollowers) * 100}%`;
+        // Update progress bar and percentage
+        const progress = ((i + batchSize) / totalFollowers) * 100;
+        progressBar.style.width = `${progress}%`;
+        progressPercentage.textContent = `${Math.min(progress, 100).toFixed(2)}%`;
         await delay(1000); // Delay to avoid hitting rate limit
     }
 
     return followersWithInfo;
 }
 
-// Toggle visibility of Bio and Organizations columns
-function toggleColumn(event) {
-    const columnClass = event.target.id === 'bio' ? 'bio-column' : 'orgs-column';
-    const columns = document.querySelectorAll(`.${columnClass}`);
-    columns.forEach(column => {
-        column.classList.toggle('hidden');
-    });
-}
-
-// Toggle dark/light mode
-document.getElementById('toggle-mode').addEventListener('click', () => {
+// Toggle light and dark modes
+document.getElementById('mode-toggle').addEventListener('change', function() {
     document.body.classList.toggle('light-mode');
 });

@@ -12,24 +12,23 @@
     <div class="container">
         <div class="toggle-container">
             <label class="switch">
-                <input type="checkbox" id="toggle-mode">
-                <span class="slider round"></span>
+                <input type="checkbox" id="mode-toggle">
+                <span class="slider"></span>
             </label>
         </div>
         <h1>Follback</h1>
-        <p>Find out which of your GitHub followers you are not following back.</p>
+        <p>Find your GitHub followers whom you are not following back.</p>
+        <p>It fetches your followers and the users you are following, then filters out those you are already following back.</p>
+        <p>Finally, it displays the remaining followers sorted by their total stars.</p>
         <form id="github-form">
             <input type="text" id="username" placeholder="GitHub Username" required>
             <input type="password" id="token" placeholder="Personal Access Token" required>
-            <div class="checkboxes">
-                <label><input type="checkbox" id="bio"> Bio</label>
-                <label><input type="checkbox" id="organizations"> Organizations</label>
-            </div>
             <button type="submit" id="submit-button">Find Followers You Don't Follow Back</button>
         </form>
         <div id="error-message" class="hidden"></div>
         <div id="progress-indicator" class="hidden">
             <div class="progress-bar"></div>
+            <div id="progress-percentage">0%</div>
         </div>
         <table id="followers-table" class="hidden">
             <thead>
