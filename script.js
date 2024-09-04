@@ -143,6 +143,15 @@ async function fetchAdditionalInfo(token, followers, progressBar, progressPercen
     const totalFollowers = followers.length;
     const batchSize = 5;
 
+    // Load cache from localStorage
+    let cache = JSON.parse(localStorage.getItem('followerStarsCache')) || {};
+
+    // Function to update cache
+    const updateCache = (login, stars) => {
+        cache[login] = { stars, timestamp: Date.now() };
+        localStorage.setItem('followerStarsCache', JSON.stringify(cache));
+    };
+
     for (let i = 0; i < totalFollowers; i += batchSize) {
         const batch = followers.slice(i, i + batchSize);
         const batchPromises = batch.map(async follower => {
@@ -158,12 +167,30 @@ async function fetchAdditionalInfo(token, followers, progressBar, progressPercen
                 totalStars: 0
             };
 
-            // Fetch total stars for each follower's repositories
-            const starsResponse = await fetch(userData.repos_url, {
-                headers: { 'Authorization': `token ${token}` }
-            });
-            const repos = await starsResponse.json();
-            followerInfo.totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
+            // Check cache first
+            const cachedData = cache[userData.login];
+            const cacheExpiry = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+            if (cachedData && (Date.now() - cachedData.timestamp) < cacheExpiry) {
+                followerInfo.totalStars = cachedData.stars;
+            } else {
+                // Fetch total stars for each follower's repositories with pagination
+                let totalStars = 0;
+                let page = 1;
+                while (true) {
+                    const starsResponse = await fetch(`${userData.repos_url}?page=${page}&per_page=100`, {
+                        headers: { 'Authorization': `token ${token}` }
+                    });
+                    const repos = await starsResponse.json();
+                    if (repos.length === 0) break;
+                    totalStars += repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
+                    page++;
+                }
+                followerInfo.totalStars = totalStars;
+
+                // Update cache
+                updateCache(userData.login, totalStars);
+            }
 
             return followerInfo;
         });
