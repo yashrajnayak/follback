@@ -3,56 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Follback</title>
+    <title>Follback - GitHub Follower Management</title>
+    <meta name="description" content="Find GitHub followers whom you are not following back, sorted by their total stars.">
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png" type="image/png">
 </head>
 <body>
     <div class="container">
-        <div class="toggle-container">
-            <label class="switch">
-                <input type="checkbox" id="mode-toggle">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <h1>Follback</h1>
-        <p>Find your GitHub followers whom you are not following back.</p>
-        <p>It fetches your followers and the users you are following, then filters out those you are already following back.</p>
-        <p>Finally, it displays the remaining followers sorted by their total stars.</p>
-        <form id="github-form">
-            <input type="text" id="username" placeholder="GitHub Username" required>
-            <input type="password" id="token" placeholder="Personal Access Token" required>
-            <button type="submit" id="submit-button">Find Followers You Don't Follow Back</button>
-        </form>
-        <div id="error-message" class="hidden"></div>
-        <div id="progress-indicator" class="hidden">
-            <div class="progress-bar"></div>
-            <div id="progress-percentage">0%</div>
-        </div>
-        <table id="followers-table" class="hidden">
-            <thead>
-                <tr id="table-headers">
-                    <th>Name</th>
-                    <th>Total Stars</th>
-                    <th class="bio-column hidden">Bio</th>
-                    <th class="orgs-column hidden">Organizations</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Follower rows will be inserted here -->
-            </tbody>
-        </table>
-        <div id="pagination" class="hidden">
-            <button id="prev-page" class="pagination-button" disabled>Previous</button>
-            <span id="page-info"></span>
-            <button id="next-page" class="pagination-button" disabled>Next</button>
-        </div>
+        <header>
+            <div class="toggle-container">
+                <label class="switch" title="Toggle light/dark mode">
+                    <input type="checkbox" id="mode-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <h1>Follback</h1>
+            <div class="description">
+                <p>Find your GitHub followers whom you are not following back, sorted by their influence.</p>
+                <p class="secondary-text">Follback identifies followers you haven't followed back and ranks them by their total repository stars - helping you connect with influential developers in your network.</p>
+            </div>
+        </header>
+
+        <main>
+            <section class="form-section">
+                <form id="github-form">
+                    <div class="form-group">
+                        <input type="text" id="username" placeholder="GitHub Username" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="token" placeholder="Personal Access Token" required>
+                        <div class="token-info">
+                            <small>Your token is used only in your browser and never stored on any server.</small>
+                        </div>
+                    </div>
+                    <button type="submit" id="submit-button">Find Followers You Don't Follow Back</button>
+                </form>
+            </section>
+
+            <div id="error-message" class="hidden"></div>
+            
+            <div id="progress-container" class="hidden">
+                <div id="progress-indicator">
+                    <div class="progress-bar"></div>
+                </div>
+                <div id="progress-percentage">0%</div>
+            </div>
+
+            <section id="results-section" class="hidden">
+                <table id="followers-table">
+                    <thead>
+                        <tr id="table-headers">
+                            <th>Name</th>
+                            <th>Total Stars</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Follower rows will be inserted here -->
+                    </tbody>
+                </table>
+                
+                <div id="pagination" class="hidden">
+                    <button id="prev-page" class="pagination-button" disabled>Previous</button>
+                    <span id="page-info"></span>
+                    <button id="next-page" class="pagination-button" disabled>Next</button>
+                </div>
+            </section>
+        </main>
     </div>
+    
     <footer>
-        Created by <a href="https://github.com/yashrajnayak" target="_blank">Yashraj Nayak</a> | 
-        <a href="https://github.com/yashrajnayak/follback" target="_blank">Contribute on GitHub</a>
+        <div class="footer-content">
+            Created by <a href="https://github.com/yashrajnayak" target="_blank">Yashraj Nayak</a> | 
+            <a href="https://github.com/yashrajnayak/follback" target="_blank">Contribute on GitHub</a>
+        </div>
     </footer>
+    
     <script src="script.js"></script>
 </body>
 </html>
